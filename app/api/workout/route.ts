@@ -2,17 +2,32 @@ import OpenAI from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
 
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-// IMPORTANT! Set the runtime to edge
 export const runtime = 'edge';
 
 export async function GET(req: NextRequest) {
-    if (req.url) {
-      try {
-        // Generate a unique timestamp for each request
-        const timestamp = new Date().toISOString();
+  // Create a response object with CORS headers
+  const response = new NextResponse(null, {
+    headers: {
+      // Allow all origins - consider restricting this in production
+      'Access-Control-Allow-Origin': '*',
+      // Specify allowed HTTP headers
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+      // Specify allowed HTTP methods
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    },
+  });
+
+  if (req.method === 'OPTIONS') {
+    // Handle preflight request for CORS
+    return response;
+  }
+
+  if (req.method === 'GET') {
+    try {
+      const timestamp = new Date().toISOString();
   
         // Ask OpenAI for a streaming completion given the prompt
         // The prompt includes the timestamp to ensure uniqueness
