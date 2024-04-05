@@ -87,7 +87,7 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
               </div>
             </CardContent>
             <CardFooter className="min-h-8">
-              <Progress.Root value={exerciseProgress[index]} max={100} className="relative overflow-hidden rounded-2xl w-60 h-8 border-solid border border-slate-100">
+              <Progress.Root value={exerciseProgress[index]} max={100} className="relative overflow-hidden rounded-2xl w-60 h-8 border-solid border border-slate-200">
                 <Progress.Indicator 
                   className=" bg-lime-300 w-full h-full transition-transform duration-[660ms] ease" 
                   style={{ transform: `translateX(-${100 - exerciseProgress[index]}%)` }}
