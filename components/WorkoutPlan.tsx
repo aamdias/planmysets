@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from './ui/card';
 import { Button } from './ui/button';
 import { MdHelpOutline } from "react-icons/md";
+import { GrPowerReset } from "react-icons/gr";
+import { BsCheckCircleFill } from "react-icons/bs";
+import { BsCheckCircle } from "react-icons/bs";
 import * as Progress from '@radix-ui/react-progress';
 
 
@@ -45,6 +48,16 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
     );
     console.log(exerciseProgress)
   };
+
+  const handleProgressDecrease = (exerciseIndex: number) => {
+    setExerciseProgress(currentProgress => 
+      currentProgress.map((progress,index)=>
+        index === exerciseIndex ?
+        Math.max(progress - 100 / plan.exercises[exerciseIndex].sets,0) :
+        progress
+      )
+    );
+  }
 
   // Calculate overall exercise progress
   const overallProgress = exerciseProgress.reduce((acc, cur) => acc + cur, 0) / plan.exercises.length;
@@ -95,11 +108,21 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                     <p>
                       Set nº{setIndex + 1}
                     </p>
-                    <Button 
-                      onClick={() => handleProgressUpdate(index)}
-                      variant="secondary">
-                      Completed 
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        onClick={() => handleProgressUpdate(index)}
+                        variant="secondary"
+                        size="icon"
+                        >
+                        <BsCheckCircle />
+                      </Button>
+                      <Button 
+                        onClick={()=> handleProgressDecrease(index)}
+                        variant="outline"
+                        size="icon">
+                        <GrPowerReset /> 
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
