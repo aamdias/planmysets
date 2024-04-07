@@ -33,10 +33,13 @@ export default function HomePage() {
       {/* Adjusted div to be more responsive with w-full */}
       <div className="flex flex-col justify-center items-center w-full max-w-4xl p-4 bg-white rounded shadow">
         {/* Wrapped content in a new div for better control over its size and background */}
-        <h1 className="text-2xl md:text-3xl lg:text-4xl mb-4 text-center">
+        <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
           {/* Responsive font size */}
           Ready to start training?
         </h1>
+        <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
+          Quick start your gym workout by clicking below. Always ask for help for a physical educator to make sure you are doing it properly, ok?
+        </p>
         {loading ? (
           <ButtonLoading />
         ) : (

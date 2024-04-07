@@ -46,10 +46,28 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
     console.log(exerciseProgress)
   };
 
+  // Calculate overall exercise progress
+  const overallProgress = exerciseProgress.reduce((acc, cur) => acc + cur, 0) / plan.exercises.length;
 
   return (
     <div>
-      <ul className="my-8">
+      <div className="my-6">
+        <h2 className="mb-2 text-md font-thin w-full text-center">YOUR WORKOUT PROGRESS</h2>
+        {/* Container for the overall progress bar and value */}
+        <div className="relative w-full h-8 border-solid border border-slate-200 rounded-2xl overflow-hidden">
+          <Progress.Root value={overallProgress} max={100} className="absolute inset-0">
+            <Progress.Indicator
+              className="bg-lime-300 w-full h-full transition-transform duration-[660ms] ease"
+              style={{ transform: `translateX(-${100 - overallProgress}%)` }}
+            />
+          </Progress.Root>
+          {/* Absolute positioned progress text */}
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            {Math.round(overallProgress)}%
+          </div>
+        </div>
+      </div>
+      <ul className="my-4">
         {plan.exercises.map((exercise, index) => (
           <Card className="my-2" key={index}>
             <CardHeader className="w-full flex-row items-center justify-between">
@@ -87,12 +105,19 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
               </div>
             </CardContent>
             <CardFooter className="min-h-8">
-              <Progress.Root value={exerciseProgress[index]} max={100} className="relative overflow-hidden rounded-2xl w-60 h-8 border-solid border border-slate-200">
-                <Progress.Indicator 
-                  className=" bg-lime-300 w-full h-full transition-transform duration-[660ms] ease" 
-                  style={{ transform: `translateX(-${100 - exerciseProgress[index]}%)` }}
+              {/* Container for the exercise progress bar and value */}
+              <div className="relative w-60 h-8 border-solid border border-slate-200 rounded-2xl overflow-hidden">
+                <Progress.Root value={exerciseProgress[index]} max={100} className="absolute inset-0">
+                  <Progress.Indicator
+                    className="bg-lime-300 w-full h-full transition-transform duration-[660ms] ease"
+                    style={{ transform: `translateX(-${100 - exerciseProgress[index]}%)` }}
                   />
-              </Progress.Root>
+                </Progress.Root>
+                {/* Absolute positioned progress text */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  {Math.round(exerciseProgress[index])}%
+                </div>
+              </div>
             </CardFooter>
           </Card>
         ))}
