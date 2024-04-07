@@ -4,7 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from './ui/card';
 import { Button } from './ui/button';
 import { MdHelpOutline } from "react-icons/md";
+import { GrPowerReset } from "react-icons/gr";
+import { BsCheckCircle } from "react-icons/bs";
 import * as Progress from '@radix-ui/react-progress';
+import ExerciseHelperDialog from './ExerciseHelperDialog';
 
 
 // Prop types for the workout plan. Adjust according to your actual data structure.
@@ -46,6 +49,16 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
     console.log(exerciseProgress)
   };
 
+  const handleProgressDecrease = (exerciseIndex: number) => {
+    setExerciseProgress(currentProgress => 
+      currentProgress.map((progress,index)=>
+        index === exerciseIndex ?
+        Math.max(progress - 100 / plan.exercises[exerciseIndex].sets,0) :
+        progress
+      )
+    );
+  }
+
   // Calculate overall exercise progress
   const overallProgress = exerciseProgress.reduce((acc, cur) => acc + cur, 0) / plan.exercises.length;
 
@@ -81,11 +94,9 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                 <CardTitle className="max-w-52">{exercise.name}</CardTitle>
                 <CardDescription className="max-w-48">{exercise.sets} sets of {exercise.reps} reps</CardDescription>
               </div>
-              <Button variant="outline" size="icon">
-                <a href={constructEncodedLink(exercise.name)} target="_blank">
-                  <MdHelpOutline className="h-4 w-4" />
-                </a>
-              </Button>
+              <ExerciseHelperDialog 
+                exerciseName={exercise.name}
+              />
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-start justify-start">
@@ -95,11 +106,21 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                     <p>
                       Set nº{setIndex + 1}
                     </p>
-                    <Button 
-                      onClick={() => handleProgressUpdate(index)}
-                      variant="secondary">
-                      Completed 
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        onClick={() => handleProgressUpdate(index)}
+                        variant="secondary"
+                        size="icon"
+                        >
+                        <BsCheckCircle />
+                      </Button>
+                      <Button 
+                        onClick={()=> handleProgressDecrease(index)}
+                        variant="outline"
+                        size="icon">
+                        <GrPowerReset /> 
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>

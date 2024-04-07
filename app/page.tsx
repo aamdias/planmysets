@@ -29,17 +29,31 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen p-4 w-full">
+    <div className="flex flex-col justify-center items-center h-fit p-4 w-full">
       {/* Adjusted div to be more responsive with w-full */}
-      <div className="flex flex-col justify-center items-center w-full max-w-4xl p-4 bg-white rounded shadow">
+      <div className="flex flex-col justify-center items-center w-full max-w-4xl px-4 py-8 bg-white rounded shadow my-8">
         {/* Wrapped content in a new div for better control over its size and background */}
-        <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
-          {/* Responsive font size */}
-          Ready to start training?
-        </h1>
-        <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-          Quick start your gym workout by clicking below. Always ask for help for a physical educator to make sure you are doing it properly, ok?
-        </p>
+        {workoutPlan ? (
+          <div>
+            <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
+            {/* Responsive font size */}
+              Let&apos;s do it.
+            </h1>
+            <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
+              Below there is s a suggestion of a set of gym exercises. Always ask for help for a physical educator to make sure you are doing it properly! If you prefer, click again to create a new workout.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
+              {/* Responsive font size */}
+              Ready to start training?
+            </h1>
+            <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
+            Jumpstart your gym routine by clicking below. You&apos;ll receive AI-generated exercise recommendations. Remember to exercise safely and consult a professional if necessary.
+            </p>
+          </div>
+        )}
         {loading ? (
           <ButtonLoading />
         ) : (
