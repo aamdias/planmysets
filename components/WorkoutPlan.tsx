@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from './ui/button';
 import { MdHelpOutline } from "react-icons/md";
 import { GrPowerReset } from "react-icons/gr";
-import { BsCheckCircleFill } from "react-icons/bs";
 import { BsCheckCircle } from "react-icons/bs";
 import * as Progress from '@radix-ui/react-progress';
+import ExerciseHelperDialog from './ExerciseHelperDialog';
 
 
 // Prop types for the workout plan. Adjust according to your actual data structure.
@@ -94,11 +94,9 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                 <CardTitle className="max-w-52">{exercise.name}</CardTitle>
                 <CardDescription className="max-w-48">{exercise.sets} sets of {exercise.reps} reps</CardDescription>
               </div>
-              <Button variant="outline" size="icon">
-                <a href={constructEncodedLink(exercise.name)} target="_blank">
-                  <MdHelpOutline className="h-4 w-4" />
-                </a>
-              </Button>
+              <ExerciseHelperDialog 
+                exerciseName={exercise.name}
+              />
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-start justify-start">
