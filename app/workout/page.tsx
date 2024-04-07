@@ -35,10 +35,10 @@ export default function HomePage() {
         {/* Wrapped content in a new div for better control over its size and background */}
         <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
           {/* Responsive font size */}
-          Let's do it.
+          Let&apos;s do it.
         </h1>
         <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-          Below there's a suggestion of a set of exercises to quick start your gym workout.Always ask for help for a physical educator to make sure you are doing it properly, ok? 
+          Below there&apos;s a suggestion of a set of exercises to quick start your gym workout.Always ask for help for a physical educator to make sure you are doing it properly, ok? 
         </p>
         {workoutPlan && (
           <WorkoutPlan plan={{ exercises: workoutPlan }} />

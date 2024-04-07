@@ -50,7 +50,7 @@ export default function HomePage() {
               Ready to start training?
             </h1>
             <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-            Jumpstart your gym routine by clicking below. You'll receive AI-generated exercise recommendations. Remember to exercise safely and consult a professional if necessary.
+            Jumpstart your gym routine by clicking below. You&apos;ll receive AI-generated exercise recommendations. Remember to exercise safely and consult a professional if necessary.
             </p>
           </div>
         )}
