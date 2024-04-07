@@ -38,7 +38,7 @@ export default function HomePage() {
           Ready to start training?
         </h1>
         <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-          Quick start your gym workout by clicking below. Always ask for help for a physical educator to make sure you're doing it properly, ok?
+          Quick start your gym workout by clicking below. Always ask for help for a physical educator to make sure you are doing it properly, ok?
         </p>
         {loading ? (
           <ButtonLoading />
