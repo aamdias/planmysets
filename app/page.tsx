@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import CreateWorkoutButton from '@/components/CreateWorkoutButton';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import WorkoutPlan from '@/components/WorkoutPlan';
 import { ButtonLoading } from '@/components/ButtonLoading';
 
@@ -57,7 +59,15 @@ export default function HomePage() {
         {loading ? (
           <ButtonLoading />
         ) : (
+          <>
+          <Button
+            variant="secondary"
+            asChild
+          >
+            <Link href="/workout">Criar treino</Link>
+          </Button>
           <CreateWorkoutButton onClick={fetchWorkoutPlan} />
+          </>
         )}
         {workoutPlan && (
           <WorkoutPlan plan={{ exercises: workoutPlan }} />
