@@ -30,6 +30,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { Separator } from "@/components/ui/separator"
 
 // Enum for workout types
 const WorkoutType = z.enum(['full-body', 'upper-body', 'lower-body']);
@@ -53,7 +54,7 @@ const formSchema = z.object({
   workoutDuration: WorkoutDuration
 });
 
-const domain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'http://localhost:3000';
+const domain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'http://localhost:3001';
 
 export default function HomePage() {
   const [workoutPlan, setWorkoutPlan] = useState(null);
@@ -106,15 +107,45 @@ export default function HomePage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       workoutType: 'full-body',
-      chosenItems: workoutItems,
+      chosenItems: [],
       workoutDuration: '30 min',
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      console.log('Fetching workout plan...');
+  
+      // Prepare the JSON body with the form values
+      const requestBody = JSON.stringify({
+        workoutType: values.workoutType,
+        workoutDuration: values.workoutDuration,
+        chosenItems: values.chosenItems,
+      });
+  
+      console.log('Request Body:', requestBody);
+      console.log('Domain:', domain);
+      const response = await fetch(`${domain}/api/workout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: requestBody,
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      setWorkoutPlan(data.formatJSON?.exercises);
+      console.log('Workout plan fetched successfully:', data);
+    } catch (error) {
+      console.error('Failed to fetch workout plan:', error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const fetchWorkoutPlan = async () => {
@@ -165,7 +196,7 @@ export default function HomePage() {
         ) : (
             <Drawer>
               <DrawerTrigger asChild>
-                <Button variant="outline">Open Drawer</Button>
+                <Button variant="secondary">Create new workout</Button>
               </DrawerTrigger>
               <DrawerContent>
                 <Form {...form} >
@@ -175,20 +206,24 @@ export default function HomePage() {
                           <DrawerTitle>Workout setup</DrawerTitle>
                           <DrawerDescription>Choose your preferences</DrawerDescription>
                         </DrawerHeader>
-                        <div className="p-4 pb-0">
+                        <Separator />
+                        <div className="px-4 pb-4">
                           <FormField 
                             control={form.control}
                             name="workoutType"
                             render={({field})=>(
                               <FormItem>
-                                  <FormLabel>
-                                    Choose your gym workout type
-                                  </FormLabel>
+                                  <div className="mt-4">
+                                    <FormLabel className="text-base">Workout Focus</FormLabel>
+                                    <FormDescription>
+                                      Choose your gym workout type
+                                    </FormDescription>
+                                  </div>
                                   <FormControl>
                                     <RadioGroup 
                                       onValueChange={field.onChange}
                                       defaultValue={field.value}
-                                      className="mb-6 pt-2"
+                                      className="pt-2"
                                       >
                                       <div className="flex items-center space-x-2">
                                         <FormControl>
@@ -219,7 +254,7 @@ export default function HomePage() {
                               name="chosenItems"
                               render={() => (
                                 <FormItem>
-                                  <div className="mb-4">
+                                  <div className="mt-4">
                                     <FormLabel className="text-base">Equipment</FormLabel>
                                     <FormDescription>
                                       Select the equipements you have available to exercise
@@ -231,23 +266,28 @@ export default function HomePage() {
                                       control={form.control}
                                       name="chosenItems"
                                       render={({ field }) => {
+                                        // Check if the item is included based on its id
+                                        const isChecked = form.watch("chosenItems").some(selectedItem => selectedItem.id === item.id);
+
                                         return (
                                           <FormItem
                                             key={item.id}
-                                            className="flex flex-row items-start space-x-3 space-y-0"
+                                            className="flex flex-row items-start space-x-2 space-y-0"
                                           >
                                             <FormControl>
                                               <Checkbox
-                                                checked={field.value.some((selectedItem) => selectedItem.id === item.id)}
+                                                checked={isChecked}
                                                 onCheckedChange={(checked) => {
-                                                  return checked
-                                                    ? field.onChange([...field.value, { id: item.id, label: item.label }])
-                                                    : field.onChange(
-                                                        field.value?.filter(
-                                                          (selectedItem) => selectedItem.id !== item.id)
-                                                        )
-                                                      )
+                                                  if (checked) {
+                                                    // Add the object to the array
+                                                    form.setValue("chosenItems", [...form.watch("chosenItems"), { id: item.id, label: item.label }]);
+                                                  } else {
+                                                    // Remove the object from the array
+                                                    form.setValue("chosenItems", form.watch("chosenItems").filter(selectedItem => selectedItem.id !== item.id));
+                                                  }
                                                 }}
+                                                className="w-4 h-4 border-2 rounded-md"
+                                                style={{ backgroundColor: isChecked ? 'black' : 'white'}}
                                               />
                                             </FormControl>
                                             <FormLabel className="font-normal">
@@ -267,9 +307,12 @@ export default function HomePage() {
                             name="workoutDuration"
                             render={({field})=>(
                               <FormItem>
-                                  <FormLabel>
-                                    And how much time do you have available?
-                                  </FormLabel>
+                                  <div className="mt-4">
+                                    <FormLabel className="text-base">Time</FormLabel>
+                                    <FormDescription>
+                                      Select how much time do you have available to exercise
+                                    </FormDescription>
+                                  </div>
                                   <FormControl>
                                     <RadioGroup 
                                       onValueChange={field.onChange}
