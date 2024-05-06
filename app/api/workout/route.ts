@@ -5,30 +5,86 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+type ItemType = {
+  id:string;
+  label:string;
+}
+
 export const runtime = 'edge';
 
-export async function GET(req: NextRequest) {
-  // Create a response object with CORS headers
-  const response = new NextResponse(null, {
-    headers: {
-      // Allow all origins - consider restricting this in production
-      'Access-Control-Allow-Origin': '*',
-      // Specify allowed HTTP headers
-      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-      // Specify allowed HTTP methods
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    },
-  });
+export async function POST(req: NextRequest) {
+  // Parse the JSON payload
+  const { workoutType = 'full-body', workoutDuration = '30 min', chosenItems }: {
+    workoutType?: string,
+    workoutDuration?: string,
+    chosenItems?: ItemType[]
+  } = await req.json();
 
-  if (req.method === 'OPTIONS') {
-    // Handle preflight request for CORS
-    return response;
-  }
+  // Default items if none provided
+  const defaultItems = [
+    { id: "dumbbells", label: "Dumbbells" },
+    { id: "barbells", label: "Barbells" },
+    { id: "cable crossover machine", label: "Cable Crossover Machine" },
+    { id: "bench press", label: "Bench Press" },
+    { id: "adjustable bench", label: "Adjustable bench" },
+    { id: "lat pull down machine", label: "Lat Pull Down machine" },
+    { id: "ab roller", label: "Ab Roller" },
+    { id: "leg extension machine", label: "Leg Extension machine" },
+    { id: "treadmill", label: "Treadmill" },
+    { id: "spin-bike", label: "Spin Bike" }
+  ];
 
-  if (req.method === 'GET') {
-    try {
-      const timestamp = new Date().toISOString();
+  const equipmentList = chosenItems?.length ? chosenItems.map(item => item.label).join('; ') : defaultItems.map(item => item.label).join('; ');
+  const timestamp = new Date().toISOString();
+
+  console.log('Workout Type:', workoutType);
+  console.log('Workout Duration:', workoutDuration);
+  console.log('Chosen Items:', equipmentList);
   
+    try {
+  
+      // Setup the prompt
+      const prompt = `
+      You are an experienced gym coach and your job is to suggest a ${workoutDuration} ${workoutType} gym
+        workout based on the following equipment available:
+        ${equipmentList}.
+        
+        Your answer should ALWAYS be a list of exercises in a JSON format. 
+        Each exercise is an object with the following type, as defined in TS:
+
+        type Exercise = {
+            name: string;
+            sets: number;
+            reps: number;
+            image?: string; // Optional URL to an image for the exercise
+        }
+
+        And the output should match this data schema:
+
+        {
+            "exercises": [
+                {
+                "name": "Barbell Squat",
+                "sets": 3,
+                "reps": 12,
+                "image": "https://example.com/barbellsquat.jpg"
+                },
+                {
+                "name": "Dumbbell Shoulder Press",
+                "sets": 3,
+                "reps": 12,
+                "image": "https://example.com/dumbbellshoulderpress.jpg"
+                }
+            ]
+        }
+
+        Please try to make an effective and fun workout plan.
+        
+        [Timestamp: ${timestamp}]
+
+      `
+
+      console.log('Prompt:',prompt)
         // Ask OpenAI for a streaming completion given the prompt
         // The prompt includes the timestamp to ensure uniqueness
         const response = await openai.chat.completions.create({
@@ -36,45 +92,7 @@ export async function GET(req: NextRequest) {
           temperature: 1.3,
           response_format: { type: "json_object" },
           messages: [
-            {"role": "system", "content": `
-            You are an experienced gym coach and your job is suggest a 45min full-body gym
-            workout based on the following equipment available:
-            Dumbbells; Barbells; Cable Crossover machine; Bench Press; 
-            adjustable bench; Lat Pull Down machine; Ab Roller; Leg Extension machine; 
-            Treadmill and spin bike. 
-            
-            You anser should ALWAYS be a list of exercises in a JSON format. 
-            Each exercise is an object with the following type, as defined in TS:
-
-            type Exercise = {
-                name: string;
-                sets: number;
-                reps: number;
-                image?: string; // Optional URL to an image for the exercise
-              }
-
-            And the output should match this data schema:
-
-            {
-                "exercises": [
-                    {
-                    "name": "Barbell Squat",
-                    "sets": 3,
-                    "reps": 12,
-                    "image": "https://example.com/barbellsquat.jpg"
-                    },
-                    {
-                    "name": "Dumbbell Shoulder Press",
-                    "sets": 3,
-                    "reps": 12,
-                    "image": "https://example.com/dumbbellshoulderpress.jpg"
-                    }
-                ]
-            }
-
-            Please try to make an effective and fun workout plan.
-            
-            [Timestamp: ${timestamp}]`},
+            {"role": "system", "content": prompt},
             {"role": "user", "content": "Suggest me a gym workout"}
           ]
         });
@@ -89,5 +107,5 @@ export async function GET(req: NextRequest) {
           status: 500
         });
       }
-    }
+    
 }
