@@ -31,6 +31,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { Check } from 'lucide-react';
+import * as CheckboxRadix from '@radix-ui/react-checkbox';
 
 // Enum for workout types
 const WorkoutType = z.enum(['full-body', 'upper-body', 'lower-body']);
@@ -165,6 +168,8 @@ export default function HomePage() {
     }
   };
 
+  const allItemsChecked = workoutItems.every(item => form.watch("chosenItems").some(selectedItem => selectedItem.id === item.id));
+
   return (
     <div className="flex flex-col justify-center items-center h-fit p-4 w-full">
       {/* Adjusted div to be more responsive with w-full */}
@@ -257,9 +262,31 @@ export default function HomePage() {
                                   <div className="mt-4">
                                     <FormLabel className="text-base">Equipment</FormLabel>
                                     <FormDescription>
-                                      Select the equipements you have available to exercise
+                                      Select the equipements you have available
                                     </FormDescription>
                                   </div>
+                                  {/* Checkbox to select all items */}
+                                  <FormItem className="flex flex-row items-center space-x-2 space-y-0 justify-start">
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={form.watch("chosenItems").length === workoutItems.length}
+                                          onCheckedChange={(checked) => {
+                                            if (checked) {
+                                              // Select all items
+                                              form.setValue("chosenItems", workoutItems.map(item => ({ id: item.id, label: item.label })));
+                                            } else {
+                                              // Deselect all items
+                                              form.setValue("chosenItems", []);
+                                            }
+                                          }}
+                                          className="ml-2 w-4 h-4 border-[1px] rounded border-slate-200 mb-1 drop-shadow-sm"
+                                          style={{ backgroundColor: allItemsChecked ? 'black' : 'white'}}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="text-xs text-slate-600 font-extralight">SELECT ALL</FormLabel>
+                                    </FormItem>
+                                  <ScrollArea className="h-20 overflow-y-auto rounded-md border px-2">
+                                  {/* Individual checkboxes */}
                                   {workoutItems.map((item) => (
                                     <FormField
                                       key={item.id}
@@ -272,7 +299,7 @@ export default function HomePage() {
                                         return (
                                           <FormItem
                                             key={item.id}
-                                            className="flex flex-row items-start space-x-2 space-y-0"
+                                            className="flex flex-row items-center space-x-2 space-y-0"
                                           >
                                             <FormControl>
                                               <Checkbox
@@ -286,7 +313,8 @@ export default function HomePage() {
                                                     form.setValue("chosenItems", form.watch("chosenItems").filter(selectedItem => selectedItem.id !== item.id));
                                                   }
                                                 }}
-                                                className="w-4 h-4 border-2 rounded-md"
+                                                className="w-4 h-4 border-[1px] rounded border-slate-300 mb-1 drop-shadow leading-none"
+                                                defaultChecked="indeterminate"
                                                 style={{ backgroundColor: isChecked ? 'black' : 'white'}}
                                               />
                                             </FormControl>
@@ -298,6 +326,7 @@ export default function HomePage() {
                                       }}
                                     />
                                   ))}
+                                  </ScrollArea>
                                   <FormMessage />
                                 </FormItem>
                               )}
@@ -310,7 +339,7 @@ export default function HomePage() {
                                   <div className="mt-4">
                                     <FormLabel className="text-base">Time</FormLabel>
                                     <FormDescription>
-                                      Select how much time do you have available to exercise
+                                      Select how much time do you have available
                                     </FormDescription>
                                   </div>
                                   <FormControl>
