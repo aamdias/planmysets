@@ -48,7 +48,7 @@ const CheckboxItem = z.object({
 const CheckboxList = z.array(CheckboxItem);
 
 // Enum for workout duration
-const WorkoutDuration = z.enum(['30 min', '1 hour']);
+const WorkoutDuration = z.enum(['30', '60']);
 
 // Combined form schema
 const formSchema = z.object({
@@ -111,7 +111,7 @@ export default function HomePage() {
     defaultValues: {
       workoutType: 'full-body',
       chosenItems: [],
-      workoutDuration: '30 min',
+      workoutDuration: '30',
     },
   })
 
@@ -350,13 +350,13 @@ export default function HomePage() {
                                       >
                                       <div className="flex items-center space-x-2">
                                         <FormControl>
-                                          <RadioGroupItem value="30 min" id="r1" />
+                                          <RadioGroupItem value="30" id="r1" />
                                         </FormControl>
                                         <FormLabel htmlFor="r1">Fast exercise, up to 30 min</FormLabel>
                                       </div>
                                       <div className="flex items-center space-x-2">
                                         <FormControl>
-                                          <RadioGroupItem value="1 hour" id="r2" />
+                                          <RadioGroupItem value="60" id="r2" />
                                         </FormControl>
                                         <FormLabel htmlFor="r2">Complete exercise, close to 1 hour</FormLabel>
                                       </div>
