@@ -6,8 +6,21 @@ import { Button } from './ui/button';
 import { MdHelpOutline } from "react-icons/md";
 import { GrPowerReset } from "react-icons/gr";
 import { BsCheckCircle } from "react-icons/bs";
+import { Badge } from './ui/badge';
 import * as Progress from '@radix-ui/react-progress';
 import ExerciseHelperDialog from './ExerciseHelperDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { format } from 'date-fns';
 
 
 // Prop types for the workout plan. Adjust according to your actual data structure.
@@ -15,7 +28,7 @@ type Exercise = {
   name: string;
   sets: number;
   reps: number;
-  image?: string; // Optional URL to an image for the exercise
+  duration: number; // In minutes
 }
 
 type WorkoutPlanProps = {
@@ -34,7 +47,7 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
   // Use effect hook to set all the array exerciseprogress to zero when the component mounts
   useEffect(() => {
     setExerciseProgress(plan.exercises.map(() => 0));
-  }, []);
+  }, [plan.exercises]);
 
 
   // Function to handle progress update
@@ -61,6 +74,8 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
 
   // Calculate overall exercise progress
   const overallProgress = exerciseProgress.reduce((acc, cur) => acc + cur, 0) / plan.exercises.length;
+
+  const today = format(new Date(), 'MMMM dd, yyyy');
 
   return (
     <div>
@@ -91,8 +106,20 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                 </div>
               )} */}
               <div className="flex-col justify-start">
+                
+              <Badge variant="secondary" className="mb-2 ml-[-4px]">
+                {exercise.duration} minutes
+                </Badge>
+
                 <CardTitle className="max-w-52">{exercise.name}</CardTitle>
-                <CardDescription className="max-w-48">{exercise.sets} sets of {exercise.reps} reps</CardDescription>
+
+                <CardDescription className="max-w-48 mt-2">
+                  {exercise.sets > 1 && exercise.reps > 1 ? (
+                    `${exercise.sets} sets of ${exercise.reps} reps`
+                  ) : (
+                    `Unique set`
+                  )}
+                </CardDescription>
               </div>
               <ExerciseHelperDialog 
                 exerciseName={exercise.name}
@@ -143,6 +170,46 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
           </Card>
         ))}
       </ul>
+      {overallProgress==100? (
+        <>
+        <div className="text-center text-lg">
+            Yeah! You did it! 🎉
+        </div>
+        <AlertDialog>
+        <AlertDialogTrigger className="w-full align-center mt-4">
+          <Button >Workout summary</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            {/* <AlertDialogTitle>Your workout</AlertDialogTitle> */}
+            <AlertDialogDescription>
+              <div className="space-y-2 bg-gray-100 p-4 rounded-md">
+                <div className="font-bold text-xl">
+                Gym Workout for {today}
+                </div>
+                {plan.exercises.map((exercise, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <BsCheckCircle className="w-4 h-4" />
+                    <span className="font-medium">{exercise.name}</span>
+                  </div>
+                ))}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Got it!</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+        </>
+
+      ):
+      (
+        <div className="text-center text-lg">
+            Keep going! 💪
+        </div>
+      )}
+      
     </div>
   );
 };

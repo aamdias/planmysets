@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       // Generate image
       const imageResponse = await openai.images.generate({
         model: "dall-e-3",
-        prompt: `Create an illustration showing a person performing ${exerciseName} in a gym setting.Emphasize proper form. Ensure the image is clear and suitable for instructional use, focusing on accuracy and safety. Tthis image should have a 1.4:1 aspect ratio`,
+        prompt: `Create an illustration showing a person performing ${exerciseName} in a gym setting.Emphasize proper form. Ensure the image is clear and suitable for instructional use, focusing on accuracy and safety. This image should have a 1.4:1 aspect ratio`,
         size: "1024x1024",
         quality: "standard",
         n: 1,
