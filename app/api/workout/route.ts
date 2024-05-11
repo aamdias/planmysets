@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         ]
       }
 
-      The total workout time calculated should be the sum of the exercise durations plus 5 minutes of rest between each exercise, and it must not exceed ${workoutDuration - 10} minutes to allow 10 minutes for warm-up and cool-down.
+      The total workout time calculated should be the sum of the exercise durations plus 5 minutes of rest between each exercise. 
 
       Keep the plan effective, safe, and fun to follow.
 
