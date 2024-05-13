@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
     { id: "seated row machine", label: "Seated Row Machine" },
     { id: "kettlebells", label: "Kettlebells" },
     { id: "exercise mat", label: "Exercise Mat" },
+    { id: "leg press", label: "Leg Press" },
   ];
 
   const equipmentList = chosenItems?.length ? chosenItems.map(item => item.label).join('; ') : defaultItems.map(item => item.label).join('; ');

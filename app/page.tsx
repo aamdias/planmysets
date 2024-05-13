@@ -104,6 +104,26 @@ export default function HomePage() {
       id: "spin-bike",
       label: "Spin Bike",
     },
+    {
+      id: "aerobic steps",
+      label: "Aerobic Steps",
+    },
+    {
+      id: "seated row machine",
+      label: "Seated Row Machine",
+    },
+    {
+      id: "kettlebells",
+      label: "Kettlebells",
+    },
+    {
+      id: "exercise mat",
+      label: "Exercise Mat",
+    },
+    {
+      id: "leg press",
+      label: "Leg Press",
+    },
   ]
 
   const form = useForm<z.infer<typeof formSchema>>({
