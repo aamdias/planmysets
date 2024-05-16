@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
         // Ask OpenAI for a streaming completion given the prompt
         // The prompt includes the timestamp to ensure uniqueness
         const response = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo-0125',
+          model: 'gpt-4o',
           temperature: 1.3,
           response_format: { type: "json_object" },
           messages: [
