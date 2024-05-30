@@ -34,6 +34,9 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { Check } from 'lucide-react';
 import * as CheckboxRadix from '@radix-ui/react-checkbox';
+import defaultItems from '@/lib/defaultWorkoutItemsHome';
+import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
+
 
 // Enum for workout types
 const WorkoutType = z.enum(['full-body', 'upper-body', 'lower-body']);
@@ -63,68 +66,7 @@ export default function HomePage() {
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const workoutItems = [
-    {
-      id: "dumbbells",
-      label: "Dumbbells",
-    },
-    {
-      id: "barbells",
-      label: "Barbells",
-    },
-    {
-      id: "cable crossover machine",
-      label: "Cable Crossover Machine",
-    },
-    {
-      id: "bench press",
-      label: "Bench Press",
-    },
-    {
-      id: "adjustable bench",
-      label: "Adjustable bench",
-    },
-    {
-      id: "lat pull down machine",
-      label: "Lat Pull Down machine",
-    },
-    {
-      id: "ab roller",
-      label: "Ab Roller",
-    },
-    {
-      id: "leg extension machine",
-      label: "Leg Extension machine",
-    },
-    {
-      id: "treadmill",
-      label: "Treadmill",
-    },
-    {
-      id: "spin-bike",
-      label: "Spin Bike",
-    },
-    {
-      id: "aerobic steps",
-      label: "Aerobic Steps",
-    },
-    {
-      id: "seated row machine",
-      label: "Seated Row Machine",
-    },
-    {
-      id: "kettlebells",
-      label: "Kettlebells",
-    },
-    {
-      id: "exercise mat",
-      label: "Exercise Mat",
-    },
-    {
-      id: "leg press",
-      label: "Leg Press",
-    },
-  ]
+  const workoutItems = fullGymItems;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
