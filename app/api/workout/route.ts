@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       1. Make the exercises suitable for achieving common fitness goals (e.g., strength, endurance, or muscle building).
       2. Ensure the exercises are varied and effective, to prevent monotony and target the intended muscle groups.
       3. Include fun or unique exercises to keep the workout engaging.
-      4. Ensure the total workout duration, including 5 min rest times between exercises, fits within the ${workoutDuration} minutes timeframe.
+      4. Ensure the total workout duration, including 2 min rest times between exercises, fits within the ${workoutDuration} minutes timeframe.
 
       Your response should ALWAYS be a list of exercises in JSON format, where each exercise is an object with the following TypeScript type:
 
