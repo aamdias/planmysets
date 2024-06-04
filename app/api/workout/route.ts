@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   // Default items if none provided
 
-  const equipmentList = chosenItems?.length ? chosenItems.map(item => item.label).join('; ') : fullGymItems.map(item => item.label).join('; ');
+  const equipmentList = chosenItems?.length ? chosenItems.map(item => item.label).join('; ') : defaultItems.map(item => item.label).join('; ');
   const timestamp = new Date().toISOString();
   const maxNumberOfExercises = Math.round(parseInt(workoutDuration) / 10);
   

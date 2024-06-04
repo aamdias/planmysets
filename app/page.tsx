@@ -37,7 +37,6 @@ import * as CheckboxRadix from '@radix-ui/react-checkbox';
 import defaultItems from '@/lib/defaultWorkoutItemsHome';
 import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
 
-
 // Enum for workout types
 const WorkoutType = z.enum(['full-body', 'upper-body', 'lower-body']);
 
@@ -66,7 +65,7 @@ export default function HomePage() {
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const workoutItems = fullGymItems;
+  const workoutItems = defaultItems;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
