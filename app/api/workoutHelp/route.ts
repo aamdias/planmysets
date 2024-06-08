@@ -38,20 +38,10 @@ export async function POST(req: NextRequest) {
         max_tokens: 150,
       });
 
-      // Generate image
-      const imageResponse = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: `Create an illustration showing a person performing ${exerciseName} in a gym setting.Emphasize proper form. Ensure the image is clear and suitable for instructional use, focusing on accuracy and safety. This image should have a 1.4:1 aspect ratio`,
-        size: "1024x1024",
-        quality: "standard",
-        n: 1,
-      });
-
       const explanation = textResponse.choices[0].message.content;
-      const imageUrl = imageResponse.data[0].url;
   
       return new NextResponse(
-        JSON.stringify({ explanation, imageUrl }),
+        JSON.stringify({ explanation }),
         {
           status: 200,
           headers: {
