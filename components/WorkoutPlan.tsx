@@ -9,6 +9,7 @@ import { BsCheckCircle } from "react-icons/bs";
 import { Badge } from './ui/badge';
 import * as Progress from '@radix-ui/react-progress';
 import ExerciseHelperDialog from './ExerciseHelperDialog';
+import ExerciseShuffleDialog from './ExerciseShuffle';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -99,12 +100,6 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
         {plan.exercises.map((exercise, index) => (
           <Card className="my-2" key={index}>
             <CardHeader className="w-full flex-row items-center justify-between">
-              {/* Image handling can be uncommented if images are to be displayed */}
-              {/* {exercise.image && (
-                <div className="max-w-48">
-                  <img src={exercise.image} alt={exercise.name} />
-                </div>
-              )} */}
               <div className="flex-col justify-start">
                 
               <Badge variant="secondary" className="mb-2 ml-[-4px]">
@@ -121,8 +116,12 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                   )}
                 </CardDescription>
               </div>
-              <ExerciseHelperDialog 
+              {/* <ExerciseHelperDialog 
                 exerciseName={exercise.name}
+              /> */}
+              <ExerciseShuffleDialog
+                exerciseName={exercise.name}
+                currentExerciseList={plan.exercises.map(exercise => exercise.name)}
               />
             </CardHeader>
             <CardContent>

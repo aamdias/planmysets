@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MdHelpOutline } from "react-icons/md";
 import { Skeleton } from './ui/skeleton';
+import defaultItems from '@/lib/defaultWorkoutItemsHome';
   
 type ExerciseDetails = {
     explanation: string;
