@@ -156,7 +156,7 @@ export default function HomePage() {
               Bora treinar? 🏋️‍♂️
             </h1>
             <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-            Crie um treino clicando abaixo. Você receberá recomendações de exercícios geradas por IA. Lembre-se de se exercitar com segurança e consultar um profissional, se necessário.
+            Crie um treino clicando abaixo. Você receberá recomendações de exercícios para academia gerados por IA. Lembre-se de se exercitar com segurança e consultar um profissional.
             </p>
           </div>
         )}
