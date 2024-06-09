@@ -5,7 +5,7 @@ import defaultItems from '@/lib/defaultWorkoutItemsHome';
 import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 export const runtime = 'edge';
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
     const requestBody = await req.json();
     const exerciseName = requestBody.exerciseName;
     const currentExerciseList = requestBody.currentExerciseList;
+    const avaibableItems = defaultItems;
   
     // Check is exerciseName is not empty
     if (!exerciseName) {
@@ -55,26 +56,30 @@ export async function POST(req: NextRequest) {
             
             Your suggestion should follow these criteria:
             1. The suggested exercise should be different from the exercise given by the user.
-            2, The suggested exercise should be one of the options that are available in the object ${defaultItems}.
+            2. The suggested exercise should be one of the options that are available in the object ${avaibableItems}.
             3. The suggested exercise should target the same muscle as the exercise given by the user.
             4. The suggested exercise should be different from the other exercises in the current list of exercises, which is ${currentExerciseList}.
+            5. Your answer should be in Portuguese - Brazil.
 
             The output should be a JSON object with this data schema:
             {
                 "suggestedExercise": [
                 {
-                    "name": "Barbell Squat",
+                    "name": "Agachamento", // In portuguese - brazil
                     "sets": 3,
                     "reps": 12,
-                    "duration": 10  // Exercise duration in minutes
+                    "duration": 10,  // Exercise duration in minutes
+                    "muscleGroup": "Pernas", // Muscle group targeted by the exercise
                 }
             }
             Your answer should always be contained in 150 tokens. No need to thank the user,
             just provide the JSON object with the suggested exercise`},
-            {"role": "user", "content": `I want a gym workout exercise replacement for my current exercise.`}
+            {"role": "user", "content": `Quero um exercísio de academia que substitua o meu atual exercício, mantendo o grupo muscular.`}
           ],
         max_tokens: 150,
       });
+
+      console.log('Prompt:', prompt)
 
       const suggestedWorkout = textResponse.choices[0].message.content;
 
