@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   Accordion,
   AccordionContent,
@@ -34,15 +35,17 @@ type Exercise = {
   sets: number;
   reps: number;
   duration: number; // In minutes
+  muscleGroup: string;
 }
 
 type WorkoutPlanProps = {
   plan: {
     exercises: Exercise[];
   };
+  isAllCardsLoading?: boolean;
 }
 
-const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
+const WorkoutPlan = ({ plan, isAllCardsLoading = false }: WorkoutPlanProps) => {
   // Initialize state for exercises and progress
   const [exercises, setExercises] = useState(plan.exercises);
   const [exerciseProgress, setExerciseProgress] = useState(plan.exercises.map(() => 0)); // Start with 0 progress for each exercise
@@ -53,6 +56,8 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
   useEffect(() => {
     setExerciseProgress(plan.exercises.map(() => 0));
   }, [plan.exercises]);
+
+  console.log(exercises)
 
   // Function to handle progress update
   const handleProgressUpdate = (exerciseIndex: number) => {
@@ -149,12 +154,12 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
   // Calculate overall exercise progress
   const overallProgress = exerciseProgress.reduce((acc, cur) => acc + cur, 0) / exercises.length;
 
-  const today = format(new Date(), 'MMMM dd, yyyy');
+  const today = format(new Date(), 'dd MMMM yyyy', { locale: ptBR });
 
   return (
     <div>
       <div className="my-6">
-        <h2 className="mb-2 text-md font-thin w-full text-center">YOUR WORKOUT PROGRESS</h2>
+        <h2 className="mb-2 text-md font-thin w-full text-center">PROGRESSO</h2>
         {/* Container for the overall progress bar and value */}
         <div className="relative w-full h-8 border-solid border border-slate-200 rounded-2xl overflow-hidden">
           <Progress.Root value={overallProgress} max={100} className="absolute inset-0">
@@ -172,12 +177,13 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
       <ul className="my-4">
         {exercises.map((exercise, index) => (
           <Card className="my-2" key={index}>
-            {loadingIndexes.includes(index) ? (
+            {isAllCardsLoading || loadingIndexes.includes(index) ? (
               <div className="p-4">
                 <Skeleton className="h-8 w-40 mb-2" />
                 <Skeleton className="h-6 w-24 mb-4" />
                 <Skeleton className="h-4 w-full mb-4" />
                 <div className="flex items-center space-x-2">
+                  <Skeleton className="h-8 w-8" />
                   <Skeleton className="h-8 w-8" />
                   <Skeleton className="h-8 w-8" />
                 </div>
@@ -188,14 +194,17 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                 <CardHeader className="w-full flex-row items-center justify-between">
                   <div className="flex-col justify-start">
                     <Badge variant="secondary" className="mb-2 ml-[-4px]">
-                      {exercise.duration} minutes
+                      {exercise.duration} minutos
+                    </Badge>
+                    <Badge variant="outline" className="mb-2 ml-2">
+                      {exercise.muscleGroup} 
                     </Badge>
                     <CardTitle className="max-w-52">{exercise.name}</CardTitle>
                     <CardDescription className="max-w-48 mt-2">
                       {exercise.sets > 1 && exercise.reps > 1 ? (
-                        `${exercise.sets} sets of ${exercise.reps} reps`
+                        `${exercise.sets} sets de ${exercise.reps} repetições`
                       ) : (
-                        `Unique set`
+                        `Set único`
                       )}
                     </CardDescription>
                   </div>
@@ -232,10 +241,10 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                 </CardContent>
                 <CardFooter className="min-h-8 flex flex-col">
                   <Accordion type="single" collapsible>
-                    <AccordionItem value="item-1" className="w-60 text-sm text-slate-700 mb-6 mt-[-16px]">
-                      <AccordionTrigger onClick={() => handleExerciseHelp(index)}>How to do it?</AccordionTrigger>
-                      <AccordionContent className="text-sm text-slate-500 border-none flex flex-col items-start">
-                        {explanations[index] ? explanations[index] : 'Loading AI created tutorial...'}
+                    <AccordionItem value="item-1" className="w-60 text-sm text-slate-500 mb-6 mt-[-16px]">
+                      <AccordionTrigger onClick={() => handleExerciseHelp(index)}>Como fazer?</AccordionTrigger>
+                      <AccordionContent className="text-sm text-slate-400 border-none flex flex-col items-start">
+                        {explanations[index] ? explanations[index] : 'Gerando um tutorial com IA...'}
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
@@ -262,18 +271,18 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
       {overallProgress == 100 ? (
         <>
           <div className="text-center text-lg">
-            Yeah! You did it! 🎉
+            Uhuu! Treino completo! 🎉
           </div>
           <AlertDialog>
             <AlertDialogTrigger className="w-full align-center mt-4">
-              <Button >Workout summary</Button>
+              <Button >Resumo do treino</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogDescription>
                   <div className="space-y-2 bg-gray-100 p-4 rounded-md">
                     <div className="font-bold text-xl">
-                      Gym Workout for {today}
+                      Treino na academia do dia {today}
                     </div>
                     {exercises.map((exercise, index) => (
                       <div key={index} className="flex items-center space-x-2">
@@ -285,14 +294,14 @@ const WorkoutPlan = ({ plan }: WorkoutPlanProps) => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Got it!</AlertDialogCancel>
+                <AlertDialogCancel>Fechar</AlertDialogCancel>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </>
       ) : (
         <div className="text-center text-lg">
-          Keep going! 💪
+          Continue firme 💪
         </div>
       )}
     </div>

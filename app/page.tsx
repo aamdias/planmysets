@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import CreateWorkoutButton from '@/components/CreateWorkoutButton';
 import { Button } from '@/components/ui/button';
 import WorkoutPlan from '@/components/WorkoutPlan';
 import { ButtonLoading } from '@/components/ButtonLoading';
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/drawer"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from '@radix-ui/react-checkbox';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -30,25 +28,22 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from '@radix-ui/react-scroll-area';
-import { Check } from 'lucide-react';
-import * as CheckboxRadix from '@radix-ui/react-checkbox';
 import defaultItems from '@/lib/defaultWorkoutItemsHome';
 import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { PiSparkleFill } from "react-icons/pi";
+import { FaCheckCircle } from "react-icons/fa";
 
 // Enum for workout types
 const WorkoutType = z.enum(['full-body', 'upper-body', 'lower-body']);
-
-// Schema for a checkbox item
-const CheckboxItem = z.object({
-  id: z.string(),  // assuming ID is a string; adjust the type if needed
-  label: z.string()
-});
-
-// List of checkbox items
-const CheckboxList = z.array(CheckboxItem);
 
 // Enum for workout duration
 const WorkoutDuration = z.enum(['30', '60']);
@@ -86,6 +81,7 @@ export default function HomePage() {
     try {
       console.log('Fetching workout plan...');
   
+      console.log('Form values:', values)
       // Prepare the JSON body with the form values
       const requestBody = JSON.stringify({
         workoutType: values.workoutType,
@@ -135,6 +131,7 @@ export default function HomePage() {
     }
   };
 
+  const today = format(new Date(), 'dd MMMM yyyy', { locale: ptBR });
   // const allItemsChecked = workoutItems.every(item => form.watch("chosenItems").some(selectedItem => selectedItem.id === item.id));
 
   return (
@@ -144,22 +141,22 @@ export default function HomePage() {
         {/* Wrapped content in a new div for better control over its size and background */}
         {workoutPlan ? (
           <div>
-            <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
+            <h1 className="text-3xl font-bold md:text-4xl lg:text-4xl mb-4 text-center">
             {/* Responsive font size */}
-              Let&apos;s do it.
+              Treino de <span className="text-zinc-400">{today}</span>
             </h1>
-            <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-              Below there is s a suggestion of a set of gym exercises. Always ask for help for a physical educator to make sure you are doing it properly! If you prefer, click again to create a new workout.
+            <p className="max-w-[700px] text-center text-gray-500 md:text-lg/relaxed dark:text-gray-400 mb-4">
+            Abaixo há uma sugestão de um treino para academia feito por IA. Sempre peça ajuda a um educador físico para garantir que você esteja executando os exercícios corretamente! Se preferir, clique novamente para criar um novo treino.
             </p>
           </div>
         ) : (
           <div>
             <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
               {/* Responsive font size */}
-              Ready to start training?
+              Bora treinar? 🏋️‍♂️
             </h1>
             <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-            Jumpstart your gym routine by clicking below. You&apos;ll receive AI-generated exercise recommendations. Remember to exercise safely and consult a professional if necessary.
+            Crie um treino clicando abaixo. Você receberá recomendações de exercícios geradas por IA. Lembre-se de se exercitar com segurança e consultar um profissional, se necessário.
             </p>
           </div>
         )}
@@ -168,15 +165,18 @@ export default function HomePage() {
         ) : (
             <Drawer>
               <DrawerTrigger asChild>
-                <Button variant="secondary">Create new workout</Button>
+                <Button variant="secondary"> 
+                <PiSparkleFill className="mr-2 h-4 w-4" /> 
+                Gerar novo treino
+                </Button>
               </DrawerTrigger>
               <DrawerContent>
                 <Form {...form} >
                   <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="mx-auto w-full max-w-sm">
                         <DrawerHeader>
-                          <DrawerTitle>Workout setup</DrawerTitle>
-                          <DrawerDescription>Choose your preferences</DrawerDescription>
+                          <DrawerTitle>Setup do Treino</DrawerTitle>
+                          <DrawerDescription>Escolha suas preferências</DrawerDescription>
                         </DrawerHeader>
                         <Separator />
                         <div className="px-4 pb-4">
@@ -186,9 +186,9 @@ export default function HomePage() {
                             render={({field})=>(
                               <FormItem>
                                   <div className="mt-4">
-                                    <FormLabel className="text-base">Workout Focus</FormLabel>
+                                    <FormLabel className="text-base">Foco</FormLabel>
                                     <FormDescription>
-                                      Choose your gym workout type
+                                      Escolha o foco do seu treino
                                     </FormDescription>
                                   </div>
                                   <FormControl>
@@ -201,19 +201,19 @@ export default function HomePage() {
                                         <FormControl>
                                           <RadioGroupItem value="full-body" id="r1" />
                                         </FormControl>
-                                        <FormLabel htmlFor="r1">Full-Body</FormLabel>
+                                        <FormLabel htmlFor="r1">Corpo todo</FormLabel>
                                       </div>
                                       <div className="flex items-center space-x-2">
                                         <FormControl>
                                           <RadioGroupItem value="upper-body" id="r2" />
                                         </FormControl>
-                                        <FormLabel htmlFor="r2">Upper Body</FormLabel>
+                                        <FormLabel htmlFor="r2">Membros superiores</FormLabel>
                                       </div>
                                       <div className="flex items-center space-x-2">
                                         <FormControl>
                                           <RadioGroupItem value="lower-body" id="r3" />
                                         </FormControl>
-                                        <FormLabel htmlFor="r3">Lower Body</FormLabel>
+                                        <FormLabel htmlFor="r3">Membros inferiores</FormLabel>
                                       </div>
                                     </RadioGroup>
                                   </FormControl>
@@ -227,9 +227,9 @@ export default function HomePage() {
                             render={({ field }) => (
                               <FormItem>
                                 <div className="mt-4">
-                                  <FormLabel className="text-base">Equipment</FormLabel>
+                                  <FormLabel className="text-base">Localização</FormLabel>
                                   <FormDescription>
-                                    Choose the type of gym equipment
+                                    Quais equipamentos você tem disponíveis
                                   </FormDescription>
                                 </div>
                                 <FormControl>
@@ -238,25 +238,41 @@ export default function HomePage() {
                                     setActiveTab(value);
                                   }}>
                                     <TabsList>
-                                      <TabsTrigger value="defaultItems">Home Gym</TabsTrigger>
-                                      <TabsTrigger value="fullGymItems">Well Equiped Gym</TabsTrigger>
+                                      <TabsTrigger value="defaultItems">Treino em casa</TabsTrigger>
+                                      <TabsTrigger value="fullGymItems">Treino na academia</TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="defaultItems">
-                                      <ScrollArea className="h-20 overflow-y-auto rounded-md border px-2">
-                                        <ul className="list-disc pl-5 space-y-1">
+                                    <ScrollArea className="h-24 overflow-y-auto rounded-md border px-2">
+                                        <div className="grid grid-cols-1 gap-2">
                                           {defaultItems.map((item) => (
-                                            <li key={item.id}>{item.label}</li>
+                                            <Card key={item.id} className="shadow-sm border border-gray-200">
+                                              <CardContent className="p-2 flex flex-row justify-between items-center">
+                                                <div className="text-sm">{item.label}</div>
+                                                <div className="text-xl w-fit">
+                                                  <FaCheckCircle className="h-4"/>
+                                                  {/* {React.createElement(item.bodyIcon)} */}
+                                                </div>
+                                              </CardContent>
+                                            </Card>
                                           ))}
-                                        </ul>
+                                        </div>
                                       </ScrollArea>
                                     </TabsContent>
                                     <TabsContent value="fullGymItems">
-                                      <ScrollArea className="h-20 overflow-y-auto rounded-md border px-2">
-                                        <ul className="list-disc pl-5 space-y-1">
+                                    <ScrollArea className="h-24 overflow-y-auto rounded-md border px-2">
+                                        <div className="grid grid-cols-1 gap-2">
                                           {fullGymItems.map((item) => (
-                                            <li key={item.id}>{item.label}</li>
+                                            <Card key={item.id} className="shadow-sm border border-gray-200">
+                                              <CardContent className="p-2 flex flex-row justify-between items-center">
+                                                <div className="text-sm">{item.label}</div>
+                                                <div className="text-sm w-fit">
+                                                  <FaCheckCircle className="h-4"/>
+                                                  {/* {React.createElement(item.bodyIcon)} */}
+                                                </div>
+                                              </CardContent>
+                                            </Card>
                                           ))}
-                                        </ul>
+                                        </div>
                                       </ScrollArea>
                                     </TabsContent>
                                   </Tabs>
@@ -271,9 +287,9 @@ export default function HomePage() {
                             render={({field})=>(
                               <FormItem>
                                   <div className="mt-4">
-                                    <FormLabel className="text-base">Time</FormLabel>
+                                    <FormLabel className="text-base">Tempo</FormLabel>
                                     <FormDescription>
-                                      Select how much time do you have available
+                                      Quanto tempo você tem disponível
                                     </FormDescription>
                                   </div>
                                   <FormControl>
@@ -286,13 +302,13 @@ export default function HomePage() {
                                         <FormControl>
                                           <RadioGroupItem value="30" id="r1" />
                                         </FormControl>
-                                        <FormLabel htmlFor="r1">Fast exercise, up to 30 min</FormLabel>
+                                        <FormLabel htmlFor="r1">Exercício rápido, até 30 min</FormLabel>
                                       </div>
                                       <div className="flex items-center space-x-2">
                                         <FormControl>
                                           <RadioGroupItem value="60" id="r2" />
                                         </FormControl>
-                                        <FormLabel htmlFor="r2">Complete exercise, close to 1 hour</FormLabel>
+                                        <FormLabel htmlFor="r2">Exercício completo, aprox 1 hora</FormLabel>
                                       </div>
                                     </RadioGroup>
                                   </FormControl>
@@ -301,10 +317,10 @@ export default function HomePage() {
                             )}
                           />
                           </div>
-                          <DrawerFooter>
-                            <Button type="submit">Create Workout</Button>
+                          <DrawerFooter className="flex flex-row justify-start items-center space-x-2">
+                            <Button type="submit" className="w-36">Criar treino</Button>
                             <DrawerClose asChild>
-                              <Button variant="outline">Cancel</Button>
+                              <Button variant="outline" className="w-36">Cancelar</Button>
                             </DrawerClose>
                           </DrawerFooter>
                       </div>
@@ -315,7 +331,7 @@ export default function HomePage() {
           
         )}
         {workoutPlan && (
-          <WorkoutPlan plan={{ exercises: workoutPlan }} />
+          <WorkoutPlan plan={{ exercises: workoutPlan }} isAllCardsLoading={loading} />
         )}
       </div>
     </div>

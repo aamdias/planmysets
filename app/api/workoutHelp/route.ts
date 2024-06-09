@@ -31,11 +31,11 @@ export async function POST(req: NextRequest) {
             {"role": "system", "content": `
             You're an experienced Gym Coach. You'll be tasked to explain how to properly 
             execute a given exercise. Please always answer in a helpfull and friendly manner.
-            Your answer should always be contained in 150 tokens. No need to thank the user,
-            just provide a clear explanation`},
+            Your answer should always be contained in 200 tokens. No need to thank the user,
+            just provide a clear explanation. Answer in Portuguese - Brazil.`},
             {"role": "user", "content": `Explain how to properly perform the gym workout named "${exerciseName}" in detail.`}
           ],
-        max_tokens: 150,
+        max_tokens: 200,
       });
 
       const explanation = textResponse.choices[0].message.content;
