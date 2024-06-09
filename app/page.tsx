@@ -36,6 +36,7 @@ import { Check } from 'lucide-react';
 import * as CheckboxRadix from '@radix-ui/react-checkbox';
 import defaultItems from '@/lib/defaultWorkoutItemsHome';
 import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Enum for workout types
 const WorkoutType = z.enum(['full-body', 'upper-body', 'lower-body']);
@@ -52,10 +53,13 @@ const CheckboxList = z.array(CheckboxItem);
 // Enum for workout duration
 const WorkoutDuration = z.enum(['30', '60']);
 
+// Enum for Gym Equipment
+const GymEquipment = z.enum(['defaultItems', 'fullGymItems']);
+
 // Combined form schema
 const formSchema = z.object({
   workoutType: WorkoutType,
-  chosenItems: CheckboxList,
+  gymEquipment: GymEquipment,
   workoutDuration: WorkoutDuration
 });
 
@@ -64,14 +68,15 @@ const domain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'http://localhost:3001';
 export default function HomePage() {
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('defaultItems');
 
-  const workoutItems = defaultItems;
+  const workoutItems = activeTab === 'defaultItems' ? defaultItems : fullGymItems;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       workoutType: 'full-body',
-      chosenItems: [],
+      gymEquipment: 'defaultItems',
       workoutDuration: '30',
     },
   })
@@ -85,7 +90,8 @@ export default function HomePage() {
       const requestBody = JSON.stringify({
         workoutType: values.workoutType,
         workoutDuration: values.workoutDuration,
-        chosenItems: values.chosenItems,
+        gymEquipment: values.gymEquipment,
+        chosenItems: activeTab === 'defaultItems' ? defaultItems : fullGymItems,
       });
   
       console.log('Request Body:', requestBody);
@@ -129,7 +135,7 @@ export default function HomePage() {
     }
   };
 
-  const allItemsChecked = workoutItems.every(item => form.watch("chosenItems").some(selectedItem => selectedItem.id === item.id));
+  // const allItemsChecked = workoutItems.every(item => form.watch("chosenItems").some(selectedItem => selectedItem.id === item.id));
 
   return (
     <div className="flex flex-col justify-center items-center h-fit p-4 w-full">
@@ -215,83 +221,50 @@ export default function HomePage() {
                               </FormItem>
                             )}
                           />
-                          <FormField
-                              control={form.control}
-                              name="chosenItems"
-                              render={() => (
-                                <FormItem>
-                                  <div className="mt-4">
-                                    <FormLabel className="text-base">Equipment</FormLabel>
-                                    <FormDescription>
-                                      Select the equipements you have available
-                                    </FormDescription>
-                                  </div>
-                                  {/* Checkbox to select all items */}
-                                  <FormItem className="flex flex-row items-center space-x-2 space-y-0 justify-start">
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={form.watch("chosenItems").length === workoutItems.length}
-                                          onCheckedChange={(checked) => {
-                                            if (checked) {
-                                              // Select all items
-                                              form.setValue("chosenItems", workoutItems.map(item => ({ id: item.id, label: item.label })));
-                                            } else {
-                                              // Deselect all items
-                                              form.setValue("chosenItems", []);
-                                            }
-                                          }}
-                                          className="ml-2 w-4 h-4 border-[1px] rounded border-slate-200 mb-1 drop-shadow-sm"
-                                          style={{ backgroundColor: allItemsChecked ? 'black' : 'white'}}
-                                        />
-                                      </FormControl>
-                                      <FormLabel className="text-xs text-slate-600 font-extralight">SELECT ALL</FormLabel>
-                                    </FormItem>
-                                  <ScrollArea className="h-20 overflow-y-auto rounded-md border px-2">
-                                  {/* Individual checkboxes */}
-                                  {workoutItems.map((item) => (
-                                    <FormField
-                                      key={item.id}
-                                      control={form.control}
-                                      name="chosenItems"
-                                      render={({ field }) => {
-                                        // Check if the item is included based on its id
-                                        const isChecked = form.watch("chosenItems").some(selectedItem => selectedItem.id === item.id);
-
-                                        return (
-                                          <FormItem
-                                            key={item.id}
-                                            className="flex flex-row items-center space-x-2 space-y-0"
-                                          >
-                                            <FormControl>
-                                              <Checkbox
-                                                checked={isChecked}
-                                                onCheckedChange={(checked) => {
-                                                  if (checked) {
-                                                    // Add the object to the array
-                                                    form.setValue("chosenItems", [...form.watch("chosenItems"), { id: item.id, label: item.label }]);
-                                                  } else {
-                                                    // Remove the object from the array
-                                                    form.setValue("chosenItems", form.watch("chosenItems").filter(selectedItem => selectedItem.id !== item.id));
-                                                  }
-                                                }}
-                                                className="w-4 h-4 border-[1px] rounded border-slate-300 mb-1 drop-shadow leading-none"
-                                                defaultChecked="indeterminate"
-                                                style={{ backgroundColor: isChecked ? 'black' : 'white'}}
-                                              />
-                                            </FormControl>
-                                            <FormLabel className="font-normal">
-                                              {item.label}
-                                            </FormLabel>
-                                          </FormItem>
-                                        )
-                                      }}
-                                    />
-                                  ))}
-                                  </ScrollArea>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                          <FormField 
+                            control={form.control}
+                            name="gymEquipment"
+                            render={({ field }) => (
+                              <FormItem>
+                                <div className="mt-4">
+                                  <FormLabel className="text-base">Equipment</FormLabel>
+                                  <FormDescription>
+                                    Choose the type of gym equipment
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Tabs defaultValue="defaultItems" onValueChange={(value) => {
+                                    field.onChange(value);
+                                    setActiveTab(value);
+                                  }}>
+                                    <TabsList>
+                                      <TabsTrigger value="defaultItems">Home Gym</TabsTrigger>
+                                      <TabsTrigger value="fullGymItems">Well Equiped Gym</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="defaultItems">
+                                      <ScrollArea className="h-20 overflow-y-auto rounded-md border px-2">
+                                        <ul className="list-disc pl-5 space-y-1">
+                                          {defaultItems.map((item) => (
+                                            <li key={item.id}>{item.label}</li>
+                                          ))}
+                                        </ul>
+                                      </ScrollArea>
+                                    </TabsContent>
+                                    <TabsContent value="fullGymItems">
+                                      <ScrollArea className="h-20 overflow-y-auto rounded-md border px-2">
+                                        <ul className="list-disc pl-5 space-y-1">
+                                          {fullGymItems.map((item) => (
+                                            <li key={item.id}>{item.label}</li>
+                                          ))}
+                                        </ul>
+                                      </ScrollArea>
+                                    </TabsContent>
+                                  </Tabs>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                           <FormField 
                             control={form.control}
                             name="workoutDuration"
