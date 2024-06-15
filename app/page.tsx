@@ -151,10 +151,19 @@ export default function HomePage() {
           </div>
         ) : (
           <div>
-            <h1 className="text-4xl font-bold md:text-5xl lg:text-5xl mb-4 text-center">
+            <div className="text-center">
+            <h1
+              className="text-4xl font-bold md:text-5xl lg:text-6xl mb-4 inline-block"
+              style={{
+                color: '#333', // Use a dark color for the text
+                borderBottom: '4px solid #EB5864', // Subtle accent with a border
+                paddingBottom: '0.5rem' // Adds some spacing to the bottom
+              }}
+            >
               {/* Responsive font size */}
-              Bora treinar? 🏋️‍♂️
+              Bora treinar?
             </h1>
+          </div>
             <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
             Crie um treino clicando abaixo. Você receberá recomendações de exercícios para academia gerados por IA. Lembre-se de se exercitar com segurança e consultar um profissional.
             </p>
@@ -165,7 +174,7 @@ export default function HomePage() {
         ) : (
             <Drawer>
               <DrawerTrigger asChild>
-                <Button variant="secondary"> 
+                <Button variant="secondary" className="bg-[#EB5864] text-white hover:bg-[#DC8A93]"> 
                 <PiSparkleFill className="mr-2 h-4 w-4" /> 
                 Gerar novo treino
                 </Button>
