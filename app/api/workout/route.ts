@@ -27,9 +27,12 @@ export async function POST(req: NextRequest) {
   const timestamp = new Date().toISOString();
   const maxExercises = Math.floor((parseInt(workoutDuration))/ 10)+2;
   
+  // Log the workout type
+  console.log('Workout Type:', workoutType);
+
   try {
-    // Setup the prompt
-    const prompt = `
+    // Default prompt
+    let prompt = `
     You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute ${workoutType} gym workout using the following available equipment:
     ${equipmentList}.
 
@@ -54,18 +57,18 @@ export async function POST(req: NextRequest) {
     If the ${workoutType} is full-body then all the exercises are accptable.
 
     If the ${workoutType} is upper-body then the exercises should target the following muscle groups:
-    - Peito, 
-    - Costas, 
-    - Ombros, 
-    - Bíceps, 
-    - Tríceps,
+    - Chest, 
+    - Backs, 
+    - Shoulders, 
+    - Biceps, 
+    - Triceps,
     - Abs
     
     If the ${workoutType} is lower-body then the exercises should target the following muscle groups:
-    - Pernas,
-    - Quadríceps,
-    - Panturrilhas,
-    - Glúteos
+    - Legs,
+    - Quadriceps,
+    - Calves,
+    - Glutes
     - Abs
 
     The output should match this data schema:
@@ -93,6 +96,95 @@ export async function POST(req: NextRequest) {
 
     [Timestamp: ${timestamp}]
     `;
+
+    switch (workoutType) {
+      case 'full-body':
+          prompt = `
+          You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute full-body gym workout using the following available equipment:
+          ${equipmentList}.
+
+          Criteria for this plan:
+          1. Ensure each exercise targets various muscle groups for a balanced full-body workout.
+          2. Ensure the exercises are varied and effective, to prevent monotony and target all major muscle groups.
+          3. Ensure the total workout duration, fits within the ${workoutDuration} minutes timeframe.
+          4. Your answer should be in Portuguese - Brazil.
+
+          Your response should ALWAYS be a list of exercises in JSON format, where each exercise is an object with the following TypeScript type:
+
+          type Exercise = {
+            name: string; // In Portuguese - Brazil
+            sets: number;
+            reps: number;
+            duration: number; // Duration in minutes, excluding rest period
+            muscleGroup: string; // Muscle group targeted by the exercise
+          }
+
+          Ensure the generated workout plan includes a variety of exercises targeting different muscle groups.
+
+          After the workout plan is generated double check your suggestions to ensure they are aligned with the full-body workout type and fit the ${workoutDuration} minutes timeframe.
+
+          [Timestamp: ${new Date().toISOString()}]
+          `;
+          break;
+
+      case 'upper-body':
+          prompt = `
+          You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute upper-body gym workout using the following available equipment:
+          ${equipmentList}.
+
+          Criteria for this plan:
+          1. Ensure each exercise targets the upper-body muscle groups, including Chest, Back, Shoulders, Biceps, Triceps, and Abs.
+          2. Ensure the exercises are varied and effective, to prevent monotony and target the intended muscle groups.
+          3. Ensure the total workout duration, fits within the ${workoutDuration} minutes timeframe.
+          4. Your answer should be in Portuguese - Brazil.
+
+          Your response should ALWAYS be a list of exercises in JSON format, where each exercise is an object with the following TypeScript type:
+
+          type Exercise = {
+            name: string; // In Portuguese - Brazil
+            sets: number;
+            reps: number;
+            duration: number; // Duration in minutes, excluding rest period
+            muscleGroup: string; // Should be "Peito", "Costas", "Ombros", "Bíceps", "Tríceps", or "Abs"
+          }
+
+          Ensure the generated workout plan strictly follows the specified workout type and includes the corresponding muscle groups.
+
+          After the workout plan is generated double check your suggestions to ensure they are aligned with the upper-body workout type and fit the ${workoutDuration} minutes timeframe.
+
+          [Timestamp: ${new Date().toISOString()}]
+          `;
+          break;
+
+      case 'lower-body':
+          prompt = `
+          You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute lower-body gym workout using the following available equipment:
+          ${equipmentList}.
+
+          Criteria for this plan:
+          1. Ensure each exercise targets the lower-body muscle groups, including Legs, Quadriceps, Calves, Glutes, and Abs.
+          2. Ensure the exercises are varied and effective, to prevent monotony and target the intended muscle groups.
+          3. Ensure the total workout duration, fits within the ${workoutDuration} minutes timeframe.
+          4. Your answer should be in Portuguese - Brazil.
+
+          Your response should ALWAYS be a list of exercises in JSON format, where each exercise is an object with the following TypeScript type:
+
+          type Exercise = {
+            name: string; // In Portuguese - Brazil
+            sets: number;
+            reps: number;
+            duration: number; // Duration in minutes, excluding rest period
+            muscleGroup: string; // Should be "Pernas", "Quadríceps", "Panturrilhas", "Glúteos", or "Abs"
+          }
+
+          Ensure the generated workout plan strictly follows the specified workout type and includes the corresponding muscle groups.
+
+          After the workout plan is generated double check your suggestions to ensure they are aligned with the lower-body workout type and fit the ${workoutDuration} minutes timeframe.
+
+          [Timestamp: ${new Date().toISOString()}]
+          `;
+          break;
+    }
 
     // Ask OpenAI for a streaming completion given the prompt
     // The prompt includes the timestamp to ensure uniqueness

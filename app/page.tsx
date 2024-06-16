@@ -64,6 +64,7 @@ export default function HomePage() {
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('defaultItems');
+  const [workoutType, setWorkoutType] = useState('full-body'); // Add this line
 
   const workoutItems = activeTab === 'defaultItems' ? defaultItems : fullGymItems;
 
@@ -80,7 +81,10 @@ export default function HomePage() {
     setLoading(true);
     try {
       console.log('Fetching workout plan...');
-  
+      
+      // Clean the workoutPlan state
+      setWorkoutPlan(null);
+
       console.log('Form values:', values)
       // Prepare the JSON body with the form values
       const requestBody = JSON.stringify({
@@ -106,6 +110,7 @@ export default function HomePage() {
   
       const data = await response.json();
       setWorkoutPlan(data.formatJSON?.exercises);
+      setWorkoutType(values.workoutType); // Update the workoutType state
       console.log('Workout plan fetched successfully:', data);
     } catch (error) {
       console.error('Failed to fetch workout plan:', error);
@@ -141,9 +146,12 @@ export default function HomePage() {
         {/* Wrapped content in a new div for better control over its size and background */}
         {workoutPlan ? (
           <div>
+            <h1 className="text-2xl font-thin text-center mb-2">
+              {today}
+            </h1>
             <h1 className="text-3xl font-bold md:text-4xl lg:text-4xl mb-4 text-center">
             {/* Responsive font size */}
-              Treino de <span className="text-zinc-400">{today}</span>
+              Treino de <span className="text-zinc-400">{workoutType}</span>
             </h1>
             <p className="max-w-[700px] text-center text-gray-500 md:text-lg/relaxed dark:text-gray-400 mb-4">
             Abaixo há uma sugestão de um treino para academia feito por IA. Sempre peça ajuda a um educador físico para garantir que você esteja executando os exercícios corretamente! Se preferir, clique novamente para criar um novo treino.
@@ -340,7 +348,7 @@ export default function HomePage() {
           
         )}
         {workoutPlan && (
-          <WorkoutPlan plan={{ exercises: workoutPlan }} isAllCardsLoading={loading} />
+          <WorkoutPlan plan={{ exercises: workoutPlan }} isAllCardsLoading={loading} availableEquipement={activeTab}/>
         )}
       </div>
     </div>
