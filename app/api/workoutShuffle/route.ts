@@ -47,8 +47,6 @@ export async function POST(req: NextRequest) {
     console.log('Exercise Name:', exerciseName);
     console.log('Current Exercise List:', currentExerciseList);
     console.log('Available Items:', avaibableItems);
-    // Log the API key
-    console.log('API Key:', process.env.OPENAI_API_KEY);
   
     try {
 
