@@ -43,9 +43,10 @@ type WorkoutPlanProps = {
     exercises: Exercise[];
   };
   isAllCardsLoading?: boolean;
+  availableEquipement: string; // Add this line
 }
 
-const WorkoutPlan = ({ plan, isAllCardsLoading = false }: WorkoutPlanProps) => {
+const WorkoutPlan = ({ plan, isAllCardsLoading = false, availableEquipement }: WorkoutPlanProps) => {
   // Initialize state for exercises and progress
   const [exercises, setExercises] = useState(plan.exercises);
   const [exerciseProgress, setExerciseProgress] = useState(plan.exercises.map(() => 0)); // Start with 0 progress for each exercise
@@ -92,7 +93,7 @@ const WorkoutPlan = ({ plan, isAllCardsLoading = false }: WorkoutPlanProps) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ exerciseName, currentExerciseList }),
+        body: JSON.stringify({ exerciseName, currentExerciseList, availableEquipement }),
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -164,7 +165,7 @@ const WorkoutPlan = ({ plan, isAllCardsLoading = false }: WorkoutPlanProps) => {
         <div className="relative w-full h-8 border-solid border border-slate-200 rounded-2xl overflow-hidden">
           <Progress.Root value={overallProgress} max={100} className="absolute inset-0">
             <Progress.Indicator
-              className="bg-lime-300 w-full h-full transition-transform duration-[660ms] ease"
+              className="bg-[#FEB9C1] w-full h-full transition-transform duration-[660ms] ease"
               style={{ transform: `translateX(-${100 - overallProgress}%)` }}
             />
           </Progress.Root>
@@ -252,7 +253,7 @@ const WorkoutPlan = ({ plan, isAllCardsLoading = false }: WorkoutPlanProps) => {
                   <div className="relative w-60 h-8 border-solid border border-slate-200 rounded-2xl overflow-hidden">
                     <Progress.Root value={exerciseProgress[index]} max={100} className="absolute inset-0">
                       <Progress.Indicator
-                        className="bg-lime-300 w-full h-full transition-transform duration-[660ms] ease"
+                        className="bg-[#FEB9C1] w-full h-full transition-transform duration-[660ms] ease"
                         style={{ transform: `translateX(-${100 - exerciseProgress[index]}%)` }}
                       />
                     </Progress.Root>
