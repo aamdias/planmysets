@@ -43,7 +43,7 @@ type WorkoutPlanProps = {
     exercises: Exercise[];
   };
   isAllCardsLoading?: boolean;
-  availableEquipement: string; // Add this line
+  availableEquipement?: string; // Add this line
 }
 
 const WorkoutPlan = ({ plan, isAllCardsLoading = false, availableEquipement }: WorkoutPlanProps) => {
