@@ -4,13 +4,29 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/react"
 import Header from "@/components/Header";
+import {
+  ClerkProvider
+} from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ["latin"] });
+const domain = process.env.NEXT_PUBLIC_APP_DOMAIN || 'http://localhost:3000';
 
 export const metadata: Metadata = {
-  title: "Maromba AI",
-  description: "AI Generated Gym Exercises",
-};
+  title: 'Maromba AI',
+  description: 'AI Generated Gym Exercises',
+  openGraph:{
+    title: 'MarombaAI',
+    description: 'The app to help musicians choose what to play next',
+    images: [
+      {
+        url: `${domain}/og-image-maromba-ai.png`,
+        width: 305,
+        height: 162,
+        alt: 'MarombaAI',
+      },
+    ]
+  }
+}
 
 export default function RootLayout({
   children,
@@ -18,15 +34,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className} style={{ height: '100%' }}>
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <Header />
-        {children}
-        <Footer />
-        <Analytics />
-        </div>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={inter.className} style={{ height: '100%' }}>
+          <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Header />
+          {children}
+          <Footer />
+          <Analytics />
+          </div>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
