@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import defaultItems from '@/lib/defaultWorkoutItemsHome';
 import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
 import { DialogClose } from '@radix-ui/react-dialog';
+import { PiSparkleFill } from "react-icons/pi";
 
 const formSchema = z.object({
   workout_focus: z.enum(['full_body', 'upper_body', 'lower_body', 'pull_workout', 'push_workout']),
@@ -46,15 +47,18 @@ const WorkoutCreationForm = ({ onSubmit }: { onSubmit: (values: FormSchema) => v
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white px-4 py-2 rounded">Criar com IA</Button>
+        <Button>
+            <PiSparkleFill className="mr-2" />
+            Criar com IA
+        </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader className="ml-2 mr-4 w-full pl-3">
+        <DialogHeader className="ml-1 mr-4 w-full pl-3">
           <DialogTitle>Novo treino</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="ml-2 mr-4 w-full px-4">
+            <div className="pt-2 mr-4 w-full px-4">
               {/* <Separator /> */}
               <div className="pb-4">
                 <FormField
@@ -210,7 +214,10 @@ const WorkoutCreationForm = ({ onSubmit }: { onSubmit: (values: FormSchema) => v
                 <DialogClose asChild>
                     <Button variant="outline" type="button">Cancelar</Button>
                 </DialogClose>
-                <Button type="submit">Criar com IA</Button>
+                <Button type="submit">
+                    <PiSparkleFill className="mr-2" />
+                    Criar com IA
+                </Button>
               </div>
             </div>
           </form>

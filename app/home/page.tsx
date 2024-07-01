@@ -106,9 +106,11 @@ const HomePage = () => {
       <main className="w-full py-12 px-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Treinos</h1>
-          <Button>
+          {workouts.length > 0 && (
+            <Button>
             <WorkoutCreationForm onSubmit={handleFormSubmit} />
-          </Button>
+            </Button>
+          )}
         </div>
         {workouts.length === 0 ? (
           <div className="no-workouts bg-gradient-to-b from-[#FCFBFB] to-[#EBEBEB] shadow rounded-lg p-6">
