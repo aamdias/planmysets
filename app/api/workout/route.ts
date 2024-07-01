@@ -205,6 +205,11 @@ export async function POST(req: NextRequest) {
     if (suggestedWorkout) {
       const formatJSON = JSON.parse(suggestedWorkout.replace(/\n\s+/g, ''));
 
+      const workoutFocusFormated = workoutType
+        .split('_')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
       console.log('Formatted JSON:', formatJSON)
       // Insert workout into Supabase
       const { data, error } = await supabase
@@ -212,14 +217,14 @@ export async function POST(req: NextRequest) {
         .insert([
           {
             user_id: userId,
-            workout_name: `${workoutType} workout`,
+            workout_name: `Treino ${workoutFocusFormated}`,
             workout_date: new Date().toISOString(),
             workout_status: 'Não iniciado',
             workout_exercises: formatJSON.exercises,
             workout_progress: 0,
             workout_exercises_progress: [],
             workout_rating: 0,
-            workout_focus: workoutType,
+            workout_focus: workoutFocusFormated,
           }
         ])
         .single();

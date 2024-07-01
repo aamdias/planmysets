@@ -39,7 +39,7 @@ export default function RootLayout({
         <body className={inter.className} style={{ height: '100%' }}>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 border-2 border-t-neutral-100 border-b-transparent">{children}</main>
             <Footer />
             <Analytics />
           </div>

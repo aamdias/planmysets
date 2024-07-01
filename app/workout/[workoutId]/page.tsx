@@ -44,12 +44,22 @@ const date = new Date(workout.workout_date).toLocaleDateString('pt-BR', {
     year: 'numeric',
 });
 
+// Format workout focus from snake case to title case
+const workoutFocus = workout.workout_focus
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
 return (
     <div className="container mx-auto py-12 px-4">
-        <h2 className="text-2xl font-thin mb-2 text-center">{date}</h2>
-        <h1 className="text-4xl font-bold mb-4 text-center">Treino de <span className="text-slate-500">{workout.workout_focus}</span></h1>
-        <h2 className="text-xl font-light mb-2 text-center text-slate-400">Na dúvida, sempre consulte um profissional</h2>
-        <WorkoutPlan plan={{ exercises: workout.workout_exercises }} />
+        <h2 className="text-xl font-light mb-2 text-center text-slate-500">{date}</h2>
+        <h1 className="text-4xl font-bold mb-4 text-center">Treino de <span className="text-[#EB5864]">{workoutFocus}</span></h1>
+        <h2 className="text-lg font-light mb-2 text-center text-slate-400">Na dúvida, sempre consulte um profissional</h2>
+        <WorkoutPlan 
+            plan={{ exercises: workout.workout_exercises }}
+            workoutFocus={workout.workout_focus}
+            workoutId={workout.id}
+        />
         <div className="flex justify-center mt-8">
             <Button asChild variant="secondary">
                 <Link href="/home" className="flex items-center gap-2">
