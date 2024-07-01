@@ -28,15 +28,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-
-// Prop types for the workout plan. Adjust according to your actual data structure.
-type Exercise = {
-  name: string;
-  sets: number;
-  reps: number;
-  duration: number; // In minutes
-  muscleGroup: string;
-}
+import { Exercise } from '@/types'; // Import the Exercise type
 
 type WorkoutPlanProps = {
   plan: {
@@ -158,8 +150,8 @@ const WorkoutPlan = ({ plan, isAllCardsLoading = false, availableEquipement }: W
   const today = format(new Date(), 'dd MMMM yyyy', { locale: ptBR });
 
   return (
-    <div>
-      <div className="my-6">
+    <div className="flex flex-col items-center">
+      <div className="my-6 min-w-48">
         <h2 className="mb-2 text-md font-thin w-full text-center">PROGRESSO</h2>
         {/* Container for the overall progress bar and value */}
         <div className="relative w-full h-8 border-solid border border-slate-200 rounded-2xl overflow-hidden">

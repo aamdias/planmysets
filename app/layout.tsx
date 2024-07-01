@@ -37,11 +37,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className} style={{ height: '100%' }}>
-          <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <Header />
-          {children}
-          <Footer />
-          <Analytics />
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <Analytics />
           </div>
         </body>
       </html>

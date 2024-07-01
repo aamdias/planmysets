@@ -11,3 +11,4 @@ This app was deployed in production at [www.marombaai.com](www.marombaai.com)
 - UI based on shadcn/ui
 - OpenAI's text models 
 - Vercel
+- Supabase
