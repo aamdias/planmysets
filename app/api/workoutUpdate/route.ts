@@ -22,9 +22,3 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ message: 'Error processing request', error }, { status: 500 });
   }
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
