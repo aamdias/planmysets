@@ -159,21 +159,17 @@ export default function HomePage() {
           </div>
         ) : (
           <div>
-            <div className="text-center">
+            <div className="text-start">
             <h1
-              className="text-4xl font-bold md:text-5xl lg:text-6xl mb-4 inline-block"
-              style={{
-                color: '#333', // Use a dark color for the text
-                borderBottom: '4px solid #EB5864', // Subtle accent with a border
-                paddingBottom: '0.5rem' // Adds some spacing to the bottom
-              }}
+              className="text-2xl font-bold md:text-4xl lg:text-4xl mb-4 inline-block"
             >
               {/* Responsive font size */}
-              Bora treinar?
+              Começe agora
             </h1>
           </div>
-            <p className="max-w-[700px] text-center text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
-            Crie um treino clicando abaixo. Você receberá recomendações de exercícios para academia gerados por IA. Lembre-se de se exercitar com segurança e consultar um profissional.
+            <p className="max-w-[700px] text-start text-gray-500 md:text-xl/relaxed dark:text-gray-400 mb-4">
+            Crie seu primeiro treino. Você poderá criar usando IA, onde receberá recomendações de exercícios para academia gerados por IA. 
+            Lembre-se de se exercitar com segurança e consultar um profissional.
             </p>
           </div>
         )}

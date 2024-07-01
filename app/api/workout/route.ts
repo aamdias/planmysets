@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
+import supabase from '@/lib/supabaseClient'; // Assuming you have created this file as per the previous instructions
 import defaultItems from '@/lib/defaultWorkoutItemsHome';
 
 const openai = new OpenAI({
@@ -7,28 +8,28 @@ const openai = new OpenAI({
 });
 
 type ItemType = {
-  id:string;
-  label:string;
-}
+  id: string;
+  label: string;
+};
 
 export const runtime = 'edge';
 
 export async function POST(req: NextRequest) {
   // Parse the JSON payload
-  const { workoutType = 'full-body', workoutDuration = '30', chosenItems }: {
+  const { workoutType = 'full-body', workoutDuration = '30', chosenItems, userId }: {
     workoutType?: string,
     workoutDuration?: string,
-    chosenItems?: ItemType[]
+    chosenItems?: ItemType[],
+    userId: string
   } = await req.json();
 
   // Default items if none provided
-
   const equipmentList = chosenItems?.length ? chosenItems.map(item => item.label).join('; ') : defaultItems.map(item => item.label).join('; ');
   const timestamp = new Date().toISOString();
-  const maxExercises = Math.floor((parseInt(workoutDuration))/ 10)+2;
-  
+  const maxExercises = Math.floor((parseInt(workoutDuration)) / 10) + 2;
+
   // Log the workout type
-  console.log('Workout Type:', workoutType);
+  console.log('Started API endpoint with the workout type of:', workoutType);
 
   try {
     // Default prompt
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     Examples of how to properly suggested exercises aligned with ${workoutType}:
     
-    If the ${workoutType} is full-body then all the exercises are accptable.
+    If the ${workoutType} is full-body then all the exercises are acceptable.
 
     If the ${workoutType} is upper-body then the exercises should target the following muscle groups:
     - Chest, 
@@ -99,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     switch (workoutType) {
       case 'full-body':
-          prompt = `
+        prompt = `
           You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute full-body gym workout using the following available equipment:
           ${equipmentList}.
 
@@ -124,11 +125,11 @@ export async function POST(req: NextRequest) {
           After the workout plan is generated double check your suggestions to ensure they are aligned with the full-body workout type and fit the ${workoutDuration} minutes timeframe.
 
           [Timestamp: ${new Date().toISOString()}]
-          `;
-          break;
+        `;
+        break;
 
       case 'upper-body':
-          prompt = `
+        prompt = `
           You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute upper-body gym workout using the following available equipment:
           ${equipmentList}.
 
@@ -153,11 +154,11 @@ export async function POST(req: NextRequest) {
           After the workout plan is generated double check your suggestions to ensure they are aligned with the upper-body workout type and fit the ${workoutDuration} minutes timeframe.
 
           [Timestamp: ${new Date().toISOString()}]
-          `;
-          break;
+        `;
+        break;
 
       case 'lower-body':
-          prompt = `
+        prompt = `
           You are an experienced gym coach specializing in personalized fitness routines. Your task is to create a ${workoutDuration} minute lower-body gym workout using the following available equipment:
           ${equipmentList}.
 
@@ -182,15 +183,14 @@ export async function POST(req: NextRequest) {
           After the workout plan is generated double check your suggestions to ensure they are aligned with the lower-body workout type and fit the ${workoutDuration} minutes timeframe.
 
           [Timestamp: ${new Date().toISOString()}]
-          `;
-          break;
+        `;
+        break;
     }
 
     // Ask OpenAI for a streaming completion given the prompt
     // The prompt includes the timestamp to ensure uniqueness
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
-      response_format: { type: "json_object" },
       temperature: 0.7,
       messages: [
         {"role": "system", "content": prompt},
@@ -199,11 +199,37 @@ export async function POST(req: NextRequest) {
     });
 
     console.log('Prompt:', prompt);
+    console.log('Response:', response.choices[0].message.content)
 
     const suggestedWorkout = response.choices[0].message.content;
     if (suggestedWorkout) {
       const formatJSON = JSON.parse(suggestedWorkout.replace(/\n\s+/g, ''));
-      return NextResponse.json({ message: "Success", formatJSON }, { status: 200 });
+
+      console.log('Formatted JSON:', formatJSON)
+      // Insert workout into Supabase
+      const { data, error } = await supabase
+        .from('workouts')
+        .insert([
+          {
+            user_id: userId,
+            workout_name: `${workoutType} workout`,
+            workout_date: new Date().toISOString(),
+            workout_status: 'Não iniciado',
+            workout_exercises: formatJSON.exercises,
+            workout_progress: 0,
+            workout_exercises_progress: [],
+            workout_rating: 0,
+            workout_focus: workoutType,
+          }
+        ])
+        .single();
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        return NextResponse.json({ message: "Error inserting workout", error }, { status: 500 });
+      }
+
+      return NextResponse.json({ message: "Success", workout: data }, { status: 200 });
     }
   } catch (error) {
     return NextResponse.json({ message: "Error", error }, {
