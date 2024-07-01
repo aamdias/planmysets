@@ -12,6 +12,7 @@ import fullGymItems from '@/lib/defaultWorkoutItemsHomeBodytech';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { FaArrowRight } from "react-icons/fa";
 import { FiTrash2 } from 'react-icons/fi';
 
 type Exercise = {
@@ -130,7 +131,7 @@ const HomePage = () => {
                     <Badge variant="outline">{workout.workout_status}</Badge>
                   </div>
                   <h2 className="text-xl font-semibold text-slate-900">Treino <span className="text-[#EB5864]">{workout.workout_focus}</span></h2>
-                  <div className="exercise-tags mt-2">
+                  <div className="exercise-tags mt-2 flex flex-wrap gap-2">
                     {workout.workout_exercises.map((exercise) => (
                     <Badge key={exercise.name} variant="secondary">{exercise.name}</Badge>
                     ))}
@@ -138,10 +139,13 @@ const HomePage = () => {
                 </div>
                 <div className="workout-actions mt-4 flex justify-between items-center">
                   <Link href={`/workout/${workout.id}`}>
-                    <Button>Acessar</Button>
+                    <Button>
+                        Acessar
+                        <FaArrowRight className="ml-2"/>
+                    </Button>
                   </Link>
                   <Button variant="ghost" onClick={() => handleDeleteWorkout(workout.id)}>
-                    <FiTrash2 className="h-5 w-5 text-red-500" />
+                    <FiTrash2 className="h-5 w-5 text-slate-500" />
                   </Button>
                 </div>
               </div>
